@@ -7,3 +7,11 @@ build/
 /captures
 .externalNativeBuild
 .cxx
+
+# 서명 키와 배포용 APK는 GitHub에 올리지 않는다
+*.jks
+*.keystore
+/mobile/release/
+/wear/release/
+*.apk
+*.aab

@@ -82,7 +82,8 @@ public class TeamPickerActivity extends ComponentActivity {
         TextView tv = new TextView(this);
         tv.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        tv.setText((selected ? "✓  " : "") + team.name + "   " + team.code);
+        String label = team.name.equalsIgnoreCase(team.code) ? team.name : team.name + "   " + team.code;
+        tv.setText((selected ? "✓  " : "") + label);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         tv.setTextColor(getColor(selected ? R.color.t1_red : R.color.text));
         tv.setGravity(Gravity.CENTER_VERTICAL);

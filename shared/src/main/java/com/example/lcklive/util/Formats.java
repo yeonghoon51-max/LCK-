@@ -10,6 +10,8 @@ public final class Formats {
 
     private static final DateTimeFormatter MATCH_TIME =
             DateTimeFormatter.ofPattern("M/d (E) HH:mm", Locale.KOREAN);
+    private static final DateTimeFormatter TIME =
+            DateTimeFormatter.ofPattern("HH:mm", Locale.KOREAN);
     private static final DateTimeFormatter CLOCK =
             DateTimeFormatter.ofPattern("HH:mm:ss", Locale.KOREAN);
 
@@ -25,6 +27,11 @@ public final class Formats {
     /** 경기 시작 시각, 예: "11/6 (금) 22:00" */
     public static String matchTime(long millis) {
         return Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).format(MATCH_TIME);
+    }
+
+    /** 오늘 경기 시각, 예: "19:00" */
+    public static String time(long millis) {
+        return Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).format(TIME);
     }
 
     /** 업데이트 시각, 예: "01:08:46" */

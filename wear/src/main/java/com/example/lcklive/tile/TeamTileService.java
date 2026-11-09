@@ -19,11 +19,13 @@ import com.example.lcklive.data.GameStats;
 import com.example.lcklive.data.LolEsportsApi;
 import com.example.lcklive.data.MatchInfo;
 import com.example.lcklive.data.TeamStatus;
+import com.example.lcklive.schedule.CheckSchedule;
 import com.example.lcklive.settings.TeamPrefs;
 import com.example.lcklive.util.Formats;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.time.ZoneId;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,8 +40,6 @@ public class TeamTileService extends TileService {
 
     private static final String TAG = "TeamTile";
     private static final String RESOURCES_VERSION = "1";
-    private static final long FRESH_LIVE_MS = 60_000;          // 경기 중: 1분마다 새로 그림
-    private static final long FRESH_IDLE_MS = 15 * 60_000;     // 평소: 15분
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int DIM = 0xFF9E9E9E;
@@ -57,11 +57,13 @@ public class TeamTileService extends TileService {
         return CallbackToFutureAdapter.getFuture(completer -> {
             executor.execute(() -> {
                 LayoutElementBuilders.LayoutElement content;
-                long freshness = FRESH_IDLE_MS;
+                long freshness;
                 try {
                     TeamStatus status = new LolEsportsApi(TeamPrefs.code(this)).fetchStatus();
-                    content = buildContent(status);
-                    if (status.live != null) freshness = FRESH_LIVE_MS;
+                    long now = System.currentTimeMillis();
+                    content = buildContent(status, now);
+                    // 경기 중엔 1분, 오늘 경기 있으면 시작 때까지, 없으면 자정까지 다시 안 그린다
+                    freshness = CheckSchedule.tileFreshness(status, now, ZoneId.systemDefault());
                 } catch (Exception e) {
                     Log.w(TAG, "타일 데이터 조회 실패", e);   // Logcat 에서 "TeamTile" 로 검색
                     content = column(
@@ -101,28 +103,49 @@ public class TeamTileService extends TileService {
 
     // ───────────────────────── 상태별 내용 ─────────────────────────
 
-    private LayoutElementBuilders.LayoutElement buildContent(TeamStatus status) {
+    private LayoutElementBuilders.LayoutElement buildContent(TeamStatus status, long now) {
+        ZoneId zone = ZoneId.systemDefault();
         if (status.live != null) {
             return liveContent(status.live);
         }
-        if (status.next != null) {
+        if (CheckSchedule.isToday(status.next, now, zone)) {
             MatchInfo n = status.next;
             return column(
-                    text("다음 경기", 12, T1_RED, true),
+                    text("오늘 경기", 12, T1_RED, true),
                     text(n.myCode + " vs " + n.oppCode, 18, WHITE, true),
                     spacer(4),
-                    text(Formats.matchTime(n.startTimeMillis), 14, WHITE, false),
+                    text(Formats.time(n.startTimeMillis) + " 시작", 16, WHITE, true),
                     text(n.leagueName + " · Bo" + n.bestOf, 11, DIM, false));
         }
-        if (status.lastCompleted != null) {
+        if (CheckSchedule.isToday(status.lastCompleted, now, zone)) {
             MatchInfo m = status.lastCompleted;
             return column(
-                    text("지난 경기 · " + m.leagueName, 12, DIM, true),
+                    text("오늘 경기 종료", 12, DIM, true),
                     text(m.myCode + " vs " + m.oppCode, 16, WHITE, true),
                     text(m.scoreText(), 30, WHITE, true),
                     text(m.wonSeries() ? m.myCode + " 승리 🏆" : m.myCode + " 패배", 12, m.wonSeries() ? GREEN : DIM, false));
         }
-        return column(text(TeamPrefs.code(this), 18, WHITE, true), text("예정된 경기 없음", 12, DIM, false));
+        return noMatchToday(status);
+    }
+
+    /** 오늘 경기 없음 + 다음 경기(또는 지난 경기) 한 줄 */
+    private LayoutElementBuilders.LayoutElement noMatchToday(TeamStatus status) {
+        LayoutElementBuilders.Column.Builder col = columnBuilder()
+                .addContent(text("오늘 경기 없음", 12, DIM, true))
+                .addContent(text(TeamPrefs.code(this), 20, WHITE, true))
+                .addContent(spacer(6));
+        if (status.next != null) {
+            MatchInfo n = status.next;
+            col.addContent(text("다음 · " + Formats.matchTime(n.startTimeMillis), 13, WHITE, false));
+            col.addContent(text("vs " + n.oppCode + " · " + n.leagueName, 11, DIM, false));
+        } else if (status.lastCompleted != null) {
+            MatchInfo m = status.lastCompleted;
+            col.addContent(text("지난 경기 " + m.scoreText() + " " + m.oppCode
+                    + (m.wonSeries() ? " 승" : " 패"), 12, DIM, false));
+        } else {
+            col.addContent(text("잡힌 일정 없음", 12, DIM, false));
+        }
+        return col.build();
     }
 
     private LayoutElementBuilders.LayoutElement liveContent(MatchInfo m) {

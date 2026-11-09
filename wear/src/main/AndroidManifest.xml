@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.LckLive">
 
-        <!-- 폰 앱 없이도 동작 (그때는 응원 팀 기본값 T1) -->
+        <!-- 폰 앱 없이 시계 혼자 동작하는 앱 -->
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
@@ -25,19 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- 폰 앱에서 응원 팀을 바꾸면 받아서 저장 -->
-        <service
-            android:name=".sync.TeamSyncListenerService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
-                <data
-                    android:host="*"
-                    android:pathPrefix="/team"
-                    android:scheme="wear" />
-            </intent-filter>
-        </service>
 
         <!-- 타일: 시계 화면을 옆으로 넘기면 보이는 응원 팀 스코어 -->
         <service

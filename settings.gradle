@@ -14,6 +14,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "LckLive"
-include ':shared'   // 순수 자바: API, 파싱, 알림 판단 (폰·워치 공용)
-include ':mobile'   // 폰 앱
+include ':shared'   // 순수 자바: API, 파싱, 알림 판단 (JUnit 테스트)
 include ':wear'     // 워치 앱

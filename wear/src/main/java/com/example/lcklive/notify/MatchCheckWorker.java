@@ -3,6 +3,7 @@ package com.example.lcklive.notify;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.wear.tiles.TileService;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.ExistingWorkPolicy;
@@ -17,12 +18,12 @@ import com.example.lcklive.alert.AlertDecider;
 import com.example.lcklive.data.LolEsportsApi;
 import com.example.lcklive.data.TeamStatus;
 import com.example.lcklive.settings.TeamPrefs;
+import com.example.lcklive.tile.TeamTileService;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * 앱을 안 켜 놔도 백그라운드에서 응원 팀 경기를 확인하고 알림을 보낸다.
- * 폰 알림은 갤럭시워치에도 자동으로 전달되므로, 워치는 따로 확인하지 않는다.
  *
  * WorkManager 의 주기 작업은 최소 15분 간격이라, 경기 중에는 그보다 자주 확인하려고
  * "실행이 끝나면 다음 실행을 예약"하는 1회성 작업을 계속 이어 붙인다.
@@ -47,6 +48,8 @@ public class MatchCheckWorker extends Worker {
         try {
             TeamStatus status = new LolEsportsApi(TeamPrefs.code(getApplicationContext())).fetchStatus();
             MatchNotifier.check(getApplicationContext(), status);
+            // 타일도 새 정보로 다시 그려 달라고 요청 (시스템이 너무 잦은 요청은 알아서 걸러줌)
+            TileService.getUpdater(getApplicationContext()).requestUpdate(TeamTileService.class);
             delayMillis = nextDelayMillis(status, System.currentTimeMillis());
         } catch (Exception e) {
             delayMillis = TimeUnit.MINUTES.toMillis(5);   // 네트워크 오류 → 5분 뒤 재시도

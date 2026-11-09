@@ -20,7 +20,6 @@ import com.example.lcklive.data.LolEsportsApi;
 import com.example.lcklive.data.MatchInfo;
 import com.example.lcklive.data.TeamStatus;
 import com.example.lcklive.settings.TeamPrefs;
-import com.example.lcklive.ui.MainActivity;
 import com.example.lcklive.util.Formats;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -33,7 +32,7 @@ import java.util.concurrent.Executors;
  *
  * 타일은 일반 화면(XML 레이아웃)과 달리 "이렇게 그려줘" 하는 설계도(protolayout)를
  * 시스템에 넘기면 시스템이 대신 그려준다. 그래서 TextView 대신 Text.Builder 를 쓴다.
- * 탭하면 앱(MainActivity)이 열린다.
+ * 탭하면 타일을 새로고침한다 (워치 앱 화면은 안내만 하므로).
  */
 public class TeamTileService extends TileService {
 
@@ -144,14 +143,10 @@ public class TeamTileService extends TileService {
 
     // ───────────────────────── protolayout 도우미 ─────────────────────────
 
-    /** 화면 전체를 채우고, 탭하면 앱을 여는 바깥 상자 */
+    /** 화면 전체를 채우고, 탭하면 타일을 새로 불러오는 바깥 상자 */
     private LayoutElementBuilders.LayoutElement clickableRoot(LayoutElementBuilders.LayoutElement content) {
-        ActionBuilders.LaunchAction openApp = new ActionBuilders.LaunchAction.Builder()
-                .setAndroidActivity(new ActionBuilders.AndroidActivity.Builder()
-                        .setPackageName(getPackageName())
-                        .setClassName(MainActivity.class.getName())
-                        .build())
-                .build();
+        // LoadAction: 시스템이 onTileRequest 를 다시 불러서 최신 정보로 다시 그린다
+        ActionBuilders.LoadAction reload = new ActionBuilders.LoadAction.Builder().build();
 
         return new LayoutElementBuilders.Box.Builder()
                 .setWidth(DimensionBuilders.expand())
@@ -160,8 +155,8 @@ public class TeamTileService extends TileService {
                 .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
                 .setModifiers(new ModifiersBuilders.Modifiers.Builder()
                         .setClickable(new ModifiersBuilders.Clickable.Builder()
-                                .setId("open_app")
-                                .setOnClick(openApp)
+                                .setId("reload")
+                                .setOnClick(reload)
                                 .build())
                         .build())
                 .addContent(content)

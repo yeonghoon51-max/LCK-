@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 원형 화면 가장자리에 글자가 잘리지 않도록 좌우/상하 여백을 넉넉히 둔다 -->
+<!-- 워치 앱 화면: 안내만. 원형 화면에 글자가 잘리지 않도록 여백을 넉넉히 둔다 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
@@ -17,72 +16,28 @@
         android:paddingBottom="30dp">
 
         <TextView
-            android:id="@+id/tvBadge"
             style="@style/WatchText"
-            android:text="불러오는 중…"
+            android:text="@string/app_name"
             android:textColor="@color/t1_red"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvTeams"
-            style="@style/WatchText"
-            android:text=""
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvScore"
-            style="@style/WatchText"
-            android:text="0 : 0"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvGameInfo"
-            style="@style/WatchText"
-            android:textColor="@color/text_dim"
-            android:textSize="12sp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvKills"
-            style="@style/WatchText"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvGold"
-            style="@style/WatchText"
-            android:textSize="14sp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvObjects"
-            style="@style/WatchText"
-            android:textColor="@color/text_dim"
-            android:textSize="11sp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvTime"
+            android:id="@+id/tvTeam"
             style="@style/WatchText"
             android:layout_marginTop="4dp"
-            android:textSize="15sp"
-            android:visibility="gone" />
+            android:textSize="13sp" />
 
         <TextView
-            android:id="@+id/tvUpdated"
             style="@style/WatchText"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/text_dim"
-            android:textSize="10sp" />
+            android:layout_marginTop="10dp"
+            android:text="경기 정보는\n타일과 폰 앱에서\n확인해주세요"
+            android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/tvTeamHint"
             style="@style/WatchText"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="10dp"
+            android:text="타일 추가: 시계 화면을 왼쪽으로 넘기고\n길게 누르기 → + → LCK 라이브"
             android:textColor="@color/text_dim"
             android:textSize="10sp" />
     </LinearLayout>

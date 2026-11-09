@@ -1,0 +1,19 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "LckLive"
+include ':shared'   // 순수 자바: API, 파싱, 알림 판단 (폰·워치 공용)
+include ':mobile'   // 폰 앱
+include ':wear'     // 워치 앱

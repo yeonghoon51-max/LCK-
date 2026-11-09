@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 팀 목록 줄 사이 간격 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size android:height="8dp" />
+    <solid android:color="@android:color/transparent" />
+</shape>

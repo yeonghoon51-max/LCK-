@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+    // 안드로이드에는 org.json 이 이미 들어 있어서, 컴파일할 때만 빌려 쓴다
+    compileOnly 'org.json:json:20240303'
+
+    testImplementation 'org.json:json:20240303'
+    testImplementation 'junit:junit:4.13.2'
+}

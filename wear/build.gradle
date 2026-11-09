@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.lcklive'
+    compileSdk 35
+
+    defaultConfig {
+        // 폰 앱과 applicationId 가 같아야 폰 ↔ 워치 데이터 동기화가 된다
+        applicationId 'com.example.lcklive'
+        minSdk 30          // Wear OS 3 이상 (갤럭시워치4 이후 전부)
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation project(':shared')
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.activity:activity:1.9.3'
+    implementation 'com.google.android.gms:play-services-wearable:18.2.0'   // 폰에서 팀 받기
+
+    // 타일
+    implementation 'androidx.wear.tiles:tiles:1.4.1'
+    implementation 'androidx.wear.protolayout:protolayout:1.2.1'
+    implementation 'androidx.concurrent:concurrent-futures:1.2.0'
+    implementation 'com.google.guava:listenablefuture:1.0'
+}
